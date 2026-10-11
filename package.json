@@ -1,0 +1,7 @@
+{
+  "name": "shagun-songara-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Shagun Songara's personal portfolio",
+  "scripts": { "dev": "python3 -m http.server 5173", "start": "python3 -m http.server 5173", "check": "node --check app.js && node --check portfolio.js" }
+}
