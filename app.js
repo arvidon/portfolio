@@ -32,6 +32,24 @@ function openVideo(project) {
     project.title;
 
   document.querySelector("#video-error").hidden = true;
+
+  // Hosted demos such as Loom can't play in a <video> element.
+  if (project.embed) {
+    video.hidden = true;
+
+    const embed = document.createElement("iframe");
+    embed.id = "demo-embed";
+    embed.src = project.embed;
+    embed.title = `${project.title} demo`;
+    embed.allow = "autoplay; fullscreen; picture-in-picture";
+    embed.allowFullscreen = true;
+    video.after(embed);
+
+    dialog.showModal();
+    return;
+  }
+
+  video.hidden = false;
   document.querySelector("#video-download").href =
     project.video;
 
@@ -76,11 +94,21 @@ if (container && Array.isArray(window.portfolioProjects)) {
       `Watch ${project.title} demo`
     );
 
-    const thumbnail = document.createElement("video");
-    thumbnail.src = `${project.video}#t=0.5`;
-    thumbnail.muted = true;
-    thumbnail.playsInline = true;
-    thumbnail.preload = "metadata";
+    let thumbnail;
+
+    if (project.thumbnail) {
+      thumbnail = document.createElement("img");
+      thumbnail.src = project.thumbnail;
+      thumbnail.alt = "";
+      thumbnail.loading = "lazy";
+    } else {
+      thumbnail = document.createElement("video");
+      thumbnail.src = `${project.video}#t=0.5`;
+      thumbnail.muted = true;
+      thumbnail.playsInline = true;
+      thumbnail.preload = "metadata";
+    }
+
     thumbnail.setAttribute("aria-hidden", "true");
     thumbnail.tabIndex = -1;
 
@@ -216,6 +244,8 @@ if (dialog) {
   });
 
   dialog.addEventListener("close", () => {
+    document.querySelector("#demo-embed")?.remove();
+
     if (!video) return;
 
     video.pause();
